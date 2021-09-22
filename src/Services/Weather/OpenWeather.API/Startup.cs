@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using OpenWeather.API.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,12 +26,12 @@ namespace OpenWeather.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "OpenWeather.API", Version = "v1" });
-            });
+            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "OpenWeather.API", Version = "v1" }));
+
+            services.AddScoped<ConfigurationModel>();
+
+            services.Configure<ConfigurationModel>(Configuration.GetSection("OpenWeather"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
