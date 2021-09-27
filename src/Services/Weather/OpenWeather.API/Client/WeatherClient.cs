@@ -22,7 +22,6 @@ namespace OpenWeather.API.Client
 
         public async Task<Forecast> GetCurrentWeatherAsync(string city)
         {
-            //api.openweathermap.org/data/2.5/weather?q=London&appid=27699aff161cbfa4d8b6b0465ace4890&units=metric
             var forecast = await httpClient.GetFromJsonAsync<Forecast>($"http://{settings.OpenWeatherHostUri}/data/2.5/weather?q={city}&appid={settings.ApiKey}&units=metric");
             return forecast;
         }
