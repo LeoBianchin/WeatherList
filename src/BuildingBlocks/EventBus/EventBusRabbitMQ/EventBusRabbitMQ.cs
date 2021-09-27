@@ -3,23 +3,23 @@ using EventBus.Abstractions;
 
 namespace EventBusRabbitMQ
 {
-    const string BROKER_NAME = "weatherlist_event_bus";
-
     public class EventBusRabbitMQ : IEventBus
     {
+        const string broker_name = "weatherlist_event_bus";
+
         public void Publish()
         {
-            throw new NotImplementedException();
+
         }
 
         public void Subscribe()
         {
-            throw new NotImplementedException();
+
         }
 
         public void Unsubscribe()
         {
-            throw new NotImplementedException();
+
         }
     }
 }
