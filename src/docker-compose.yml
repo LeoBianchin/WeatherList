@@ -1,0 +1,9 @@
+version: '1.0'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+
+  openweather-api:
+    image: ${DOCKER_REGISTRY-}openweather.api
+    dockerfile: openweather.api/Dockerfile
