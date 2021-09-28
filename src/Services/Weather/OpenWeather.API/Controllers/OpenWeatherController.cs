@@ -1,3 +1,5 @@
+using EventBus;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -19,9 +21,12 @@ namespace OpenWeather.API.Controllers
     public class OpenWeatherController : ControllerBase
     {        
         private readonly WeatherClient client;
-        public OpenWeatherController(WeatherClient client)
+
+        readonly IPublishEndpoint _publishEndpoint;
+        public OpenWeatherController(WeatherClient client, IPublishEndpoint publishEndpoint)
         {
             this.client = client;
+            _publishEndpoint = publishEndpoint;
         }
 
         [HttpGet("[action]/{city}")]
@@ -30,6 +35,11 @@ namespace OpenWeather.API.Controllers
             try
             {
                 var forecast = await client.GetCurrentWeatherAsync(city);
+                await _publishEndpoint.Publish<WeatherMessage>(new()
+                {
+                    City = city,
+                    Temp = forecast.main.temp
+                });
 
                 return Ok(forecast);
             }

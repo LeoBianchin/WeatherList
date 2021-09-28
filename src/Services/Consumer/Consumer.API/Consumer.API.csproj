@@ -1,15 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>d7a906a8-c017-435d-b598-7dd63e7c2a5b</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="7.2.2" />
     <PackageReference Include="MassTransit.AspNetCore" Version="7.2.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="7.2.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 

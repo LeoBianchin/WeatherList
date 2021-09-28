@@ -1,20 +1,14 @@
+using System;
+using EventBus;
 using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using OpenWeather.API.Client;
-using OpenWeather.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace OpenWeather.API
+namespace Consumer.API
 {
     public class Startup
     {
@@ -30,6 +24,8 @@ namespace OpenWeather.API
         {
             services.AddMassTransit(x =>
             {
+                x.AddConsumer<WeatherMessageConsumer>();
+
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     cfg.Host(new Uri("rabbitmq://localhost"), h =>
@@ -37,17 +33,20 @@ namespace OpenWeather.API
                         h.Username("admin");
                         h.Password("123456");
                     });
+
+                    cfg.ReceiveEndpoint("event-listener", e => {
+                        e.ConfigureConsumer<WeatherMessageConsumer>(context);
+                    });
                 });
             });
-
+            
             services.AddMassTransitHostedService();
 
             services.AddControllers();
-            services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "OpenWeather.API", Version = "v1" }));
-
-            services.Configure<ServiceSettings>(Configuration.GetSection("ServiceSettings"));
-
-            services.AddHttpClient<WeatherClient>();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Consumer.API", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,8 +56,10 @@ namespace OpenWeather.API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenWeather.API v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Consumer.API v1"));
             }
+
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
