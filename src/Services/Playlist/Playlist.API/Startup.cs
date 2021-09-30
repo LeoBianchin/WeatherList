@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,7 +27,23 @@ namespace Playlist.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMassTransit(x =>
+            {
+                x.AddConsumer<WeatherMessageConsumer>();
 
+                x.UsingRabbitMq((context, cfg) =>
+                {
+                    cfg.Host(new Uri(@"amqp://guest:guest@localhost:5672/"), h =>
+                    {
+                        h.Username("guest");
+                        h.Password("guest");
+                    });
+
+                    cfg.ReceiveEndpoint("event-listener", e => e.ConfigureConsumer<WeatherMessageConsumer>(context));
+                });
+            });
+            
+            services.AddMassTransitHostedService();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

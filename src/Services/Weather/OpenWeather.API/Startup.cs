@@ -32,10 +32,10 @@ namespace OpenWeather.API
             {
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(new Uri("rabbitmq://localhost"), h =>
+                    cfg.Host(new Uri(@"amqp://guest:guest@localhost:5672/"), h =>
                     {
-                        h.Username("admin");
-                        h.Password("123456");
+                        h.Username("guest");
+                        h.Password("guest");
                     });
                 });
             });
