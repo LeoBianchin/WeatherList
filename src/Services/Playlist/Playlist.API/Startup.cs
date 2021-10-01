@@ -22,6 +22,11 @@ namespace Playlist.API
             Configuration = configuration;
         }
 
+        static bool? _isRunningInContainer;
+
+        static bool IsRunningInContainer =>
+            _isRunningInContainer ??= bool.TryParse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), out var inContainer) && inContainer;
+         
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -33,7 +38,12 @@ namespace Playlist.API
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
-                    cfg.Host(new Uri(@"amqp://guest:guest@localhost:5672/"), h =>
+                    var rabbithost = "localhost";
+
+                    if (IsRunningInContainer)
+                        rabbithost = "rabbitmq";
+
+                    cfg.Host(rabbithost, h =>
                     {
                         h.Username("guest");
                         h.Password("guest");

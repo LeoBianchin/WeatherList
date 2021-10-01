@@ -4,15 +4,9 @@ services:
   rabbitmq:
     image: masstransit/rabbitmq:latest
     ports:
-      - 5672:5672
-      - 15672:15672
-    healthcheck:
-      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
-      interval: 5s
-      timeout: 15s
-      retries: 1
-    networks:
-        - rabbitmq_go_net
+     - "5672:5672"
+     - "15672:15672"
+     - "15692:15692"
 
   openweather:
     image: ${DOCKER_REGISTRY-}openweather
@@ -21,12 +15,10 @@ services:
       context: .
       dockerfile: Services/Weather/OpenWeather.API/Dockerfile
     ports:
-      - 5001:80
-    networks:
-      - rabbitmq_go_net
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
 
   playlist:
     image: ${DOCKER_REGISTRY-}playlist
@@ -35,13 +27,7 @@ services:
       context: .
       dockerfile: Services/Playlist/Playlist.API/Dockerfile
     ports:
-      - 5002:80
-    networks:
-        - rabbitmq_go_net
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-
-networks:
-  rabbitmq_go_net:
-    driver: bridge
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
