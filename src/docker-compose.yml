@@ -16,9 +16,10 @@ services:
       dockerfile: Services/Weather/OpenWeather.API/Dockerfile
     ports:
       - "5001:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      # map the dotnet user-secret folder
+      - $APPDATA/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro  
+
 
   playlist:
     image: ${DOCKER_REGISTRY-}playlist
@@ -28,6 +29,4 @@ services:
       dockerfile: Services/Playlist/Playlist.API/Dockerfile
     ports:
       - "5002:80"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:80
+

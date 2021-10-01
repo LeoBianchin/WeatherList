@@ -27,7 +27,7 @@ namespace OpenWeather.API
 
         static bool IsRunningInContainer =>
             _isRunningInContainer ??= bool.TryParse(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), out var inContainer) && inContainer;
-            
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -42,7 +42,7 @@ namespace OpenWeather.API
                     if (IsRunningInContainer)
                         rabbithost = "rabbitmq";
 
-                    cfg.Host(rabbithost, h =>
+                    cfg.Host(rabbithost, "/", h =>
                     {
                         h.Username("guest");
                         h.Password("guest");
@@ -66,9 +66,10 @@ namespace OpenWeather.API
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenWeather.API v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "OpenWeather.API v1"));
 
             app.UseRouting();
 
